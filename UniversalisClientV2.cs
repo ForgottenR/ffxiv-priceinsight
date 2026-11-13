@@ -78,7 +78,7 @@ file class Result {
     public List<WorldUploadTime>? worldUploadTimes { get; set; }
 
     public MarketBoardData ToMarketBoardData(uint worldId) {
-        var (worldName, dcName, region) = UniversalisClientV2.WorldLookup[worldId];
+        var (worldName, dcName, region) = WorldInfoResolver.GetOrUnknown(UniversalisClientV2.WorldLookup, worldId);
         var worldUploadTimes = this.worldUploadTimes != null
             ? this.worldUploadTimes.ToDictionary(w => w.worldId, w => (DateTime)w.timestamp)
             : new Dictionary<uint, DateTime>();
@@ -172,7 +172,7 @@ file class Entry {
             return null;
         string? world = null, datacenter = null;
         if (e.worldId != null) {
-            (world, datacenter, _) = UniversalisClientV2.WorldLookup[e.worldId.Value];
+            (world, datacenter, _) = WorldInfoResolver.GetOrUnknown(UniversalisClientV2.WorldLookup, e.worldId);
         }
 
         return new Listing { Price = e.price.Value, Time = e.timestamp, World = world, Datacenter = datacenter };
